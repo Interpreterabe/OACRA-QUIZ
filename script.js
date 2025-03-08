@@ -1,22 +1,23 @@
-// Import Firebase SDK 
+// ✅ Import Firebase SDK from Google CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
 
-// Your Firebase Config (Replace with yours)
+// ✅ Correct Firebase Config (REPLACE ONLY IF NEEDED)
 const firebaseConfig = {
-    apiKey: "YOUR-REAL-API-KEY",
-    authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
-    projectId: "YOUR-PROJECT-ID",
-    storageBucket: "YOUR-PROJECT-ID.appspot.com",
-    messagingSenderId: "YOUR-SENDER-ID",
-    appId: "YOUR-APP-ID"
+  apiKey: "AIzaSyDr7Run0KxSmNbucDAIidh7bP8Qth4fiGk",
+  authDomain: "oacra-quiz.firebaseapp.com",
+  projectId: "oacra-quiz",
+  storageBucket: "oacra-quiz.appspot.com",  // ✅ Fixed this
+  messagingSenderId: "220184308634",
+  appId: "1:220184308634:web:dda26b6686016489e0a823",
+  measurementId: "G-M36PWVPBDS"
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getFirestore(app);  // ✅ Fix: Firestore is required for quiz storage
 
-// Sample Questions
+// ✅ Sample Questions
 const questions = [
     "What is the first step to probation success?",
     "Can you request early termination of probation?",
@@ -26,28 +27,28 @@ const questions = [
 
 let currentQuestion = 0;
 
-// Show next question
+// ✅ Show Next Question
 function nextQuestion() {
     if (currentQuestion < questions.length) {
         document.getElementById("question").innerText = questions[currentQuestion];
         currentQuestion++;
     } else {
         document.getElementById("question").innerText = "Quiz Completed!";
-        saveQuizResult(100); // Example score
+        saveQuizResult(100); // Example Score
     }
 }
 
-// Save Quiz Result to Firebase
+// ✅ Save Quiz Result to Firestore
 async function saveQuizResult(userScore) {
     try {
         await addDoc(collection(db, "oacra-quiz"), {
             score: userScore,
             timestamp: serverTimestamp()
         });
-        console.log("Quiz result saved!");
+        console.log("✅ Quiz result saved to Firestore!");
     } catch (error) {
-        console.error("Error saving result:", error);
+        console.error("❌ Error saving result:", error);
     }
 }
-window.nextQuestion = nextQuestion;
+
 
