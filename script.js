@@ -49,4 +49,5 @@ async function saveQuizResult(userScore) {
         console.error("Error saving result:", error);
     }
 }
+window.nextQuestion = nextQuestion;
 
