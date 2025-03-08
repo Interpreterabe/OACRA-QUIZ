@@ -4,12 +4,12 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Your Firebase Config (Replace with yours)
 const firebaseConfig = {
-  apiKey: "YOUR-API-KEY",
-  authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
-  projectId: "YOUR-PROJECT-ID",
-  storageBucket: "YOUR-PROJECT-ID.appspot.com",
-  messagingSenderId: "YOUR-SENDER-ID",
-  appId: "YOUR-APP-ID"
+    apiKey: "YOUR-REAL-API-KEY",
+    authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
+    projectId: "YOUR-PROJECT-ID",
+    storageBucket: "YOUR-PROJECT-ID.appspot.com",
+    messagingSenderId: "YOUR-SENDER-ID",
+    appId: "YOUR-APP-ID"
 };
 
 // Initialize Firebase
