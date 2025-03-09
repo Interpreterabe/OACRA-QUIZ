@@ -3,63 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OACRA Compliance Readiness Quiz</title>
+    <title>OACRA Quiz</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-            background-color: #f4f4f4;
-        }
-        .quiz-container {
-            width: 60%;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: #007bff;
-            color: #fff;
-        }
-        .hidden {
-            display: none;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #ddd;
-            margin-top: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .progress {
-            height: 100%;
-            width: 0;
-            background: #28a745;
-            transition: width 0.3s;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f8f8f8; }
+        .container { width: 50%; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background: white; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        button { margin: 5px; padding: 10px; font-size: 16px; cursor: pointer; }
+        .option-button { display: block; width: 100%; margin: 5px 0; padding: 10px; border: 1px solid #ddd; background-color: #eee; cursor: pointer; }
+        .option-button:hover { background-color: #ddd; }
+        progress { width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
     <h1>OACRA Compliance Readiness Quiz</h1>
-    <div class="quiz-container">
-        <input type="text" id="username" placeholder="Enter your name" style="margin-bottom: 10px; padding: 5px;">
-        <div id="question-container">
-            <p id="question">Loading question...</p>
-            <div id="options"></div>
-        </div>
-        <button id="next-btn" onclick="nextQuestion()">Next</button>
-        <div class="progress-bar"><div class="progress" id="progress"></div></div>
+    <div class="container" id="nameContainer">
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <button id="startButton">Next</button>
     </div>
+
+    <div class="container" id="quizContainer" style="display:none;">
+        <p id="question">Loading question...</p>
+        <div id="options"></div>
+        <progress id="progressBar" value="0" max="100"></progress>
+    </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
