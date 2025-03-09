@@ -1,4 +1,4 @@
-// Import Firebase modules
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -17,10 +17,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging Firebase (Check Console)
-console.log("Firebase Initialized:", app);
-console.log("Firestore Initialized:", db);
-
+// Debugging to check if Firebase is initialized
+console.log("Firebase App Initialized:", app);
+console.log("Firestore DB:", db);
 // Quiz Questions
 const questions = [
     "What is the first step to probation success?",
