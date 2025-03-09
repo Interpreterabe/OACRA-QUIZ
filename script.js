@@ -1,16 +1,21 @@
-// ✅ Import Firebase SDK from Google CDN
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+// Import Firebase SDK properly
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// ✅ Correct Firebase Config (REPLACE ONLY IF NEEDED)
+// Your Firebase Config
 const firebaseConfig = {
-  apiKey: "YOUR-REAL-API-KEY",
+  apiKey: "AIzaSyDr7Run0KxSmNbucDAIidh7bP8Qth4fiGk",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
   storageBucket: "oacra-quiz.appspot.com",
-  messagingSenderId: "YOUR-SENDER-ID",
-  appId: "YOUR-APP-ID"
+  messagingSenderId: "220184308634",
+  appId: "1:220184308634:web:dda26b6686016489e0a823",
+  measurementId: "G-M36PWVPBDS"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
