@@ -4,13 +4,12 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // ✅ Correct Firebase Config (REPLACE ONLY IF NEEDED)
 const firebaseConfig = {
-  apiKey: "AIzaSyDr7Run0KxSmNbucDAIidh7bP8Qth4fiGk",
+  apiKey: "YOUR-REAL-API-KEY",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
-  storageBucket: "oacra-quiz.appspot.com",  // ✅ Fixed this
-  messagingSenderId: "220184308634",
-  appId: "1:220184308634:web:dda26b6686016489e0a823",
-  measurementId: "G-M36PWVPBDS"
+  storageBucket: "oacra-quiz.appspot.com",
+  messagingSenderId: "YOUR-SENDER-ID",
+  appId: "YOUR-APP-ID"
 };
 
 // ✅ Initialize Firebase
