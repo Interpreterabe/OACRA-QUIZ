@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "YOUR-API-KEY",
+  apiKey: "YOUR-NEW-API-KEY",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
   storageBucket: "oacra-quiz.appspot.com",
@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging Firebase Initialization
+// Debugging to check if Firebase is initialized
 console.log("Firebase App Initialized:", app);
 console.log("Firestore DB:", db);
 
@@ -31,35 +31,37 @@ const questions = [
 
 let currentQuestion = 0;
 
-// Show first question
+// Display the first question
 document.getElementById("question").innerText = questions[currentQuestion];
 
-// Handle answer selection and store it in Firebase
-async function submitAnswer(answer) {
-    try {
-        // Save the response to Firestore
-        const docRef = await addDoc(collection(db, "oacra-quiz"), {
-            question: questions[currentQuestion],
-            answer: answer,
-            timestamp: serverTimestamp()
-        });
-
-        console.log("Answer saved with ID:", docRef.id);
-
-        // Move to the next question
-        nextQuestion();
-    } catch (error) {
-        console.error("Error saving answer:", error);
-    }
+// Function to handle answers
+function submitAnswer(answer) {
+    console.log("User selected:", answer);
+    saveQuizResult(100, answer); // Example: Sending answer & score to Firebase
+    nextQuestion();
 }
 
-// Function to display the next question
+// Function to go to the next question
 function nextQuestion() {
     currentQuestion++;
     if (currentQuestion < questions.length) {
         document.getElementById("question").innerText = questions[currentQuestion];
     } else {
         document.getElementById("question").innerText = "Quiz Completed!";
-        document.getElementById("answers").innerHTML = ""; // Hide answer buttons after completion
+    }
+}
+
+// Save Quiz Result to Firebase
+async function saveQuizResult(userScore, userAnswer) {
+    try {
+        const docRef = await addDoc(collection(db, "oacra-quiz"), {
+            question: questions[currentQuestion - 1], // Store the last question
+            answer: userAnswer, // Store the selected answer
+            score: userScore,
+            timestamp: serverTimestamp()
+        });
+        console.log("Quiz result saved with ID:", docRef.id);
+    } catch (error) {
+        console.error("Error saving result:", error);
     }
 }
