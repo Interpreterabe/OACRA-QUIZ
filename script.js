@@ -1,4 +1,4 @@
-// Import Firebase SDK
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -17,82 +17,76 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging Firebase Connection
-console.log("Firebase App Initialized:", app);
-console.log("Firestore DB:", db);
-
-// Quiz Questions and Answers
-const quizData = [
-    { question: "What is the first step to probation success?", options: ["Stay informed", "Ignore rules"], answer: "Stay informed" },
-    { question: "Can you request early termination of probation?", options: ["Yes", "No"], answer: "Yes" },
-    { question: "Is employment verification required?", options: ["Yes", "No"], answer: "Yes" },
-    { question: "How do you report a change of address?", options: ["Tell probation officer", "Do nothing"], answer: "Tell probation officer" }
+// Quiz Questions
+const questions = [
+    { q: "What is the first step to probation success?", options: ["Understand your conditions", "Ignore your officer", "Miss meetings"], correct: 0 },
+    { q: "Can you request early termination of probation?", options: ["Yes", "No"], correct: 0 },
+    { q: "Is employment verification required?", options: ["Yes", "No"], correct: 0 },
+    { q: "How do you report a change of address?", options: ["Notify your officer", "Ignore it", "Wait until the next check-in"], correct: 0 },
+    { q: "Are travel restrictions part of probation?", options: ["Yes", "No"], correct: 0 },
+    { q: "What happens if restitution is unpaid?", options: ["Violation can be filed", "Nothing", "The debt disappears"], correct: 0 },
 ];
 
-let currentQuestionIndex = 0;
+let currentQuestion = 0;
 let score = 0;
 let userAnswers = [];
 
-// Load the first question
-function loadQuestion() {
-    const questionElement = document.getElementById("question");
-    const optionsContainer = document.getElementById("options");
-    const progressBar = document.getElementById("progress-bar");
+function nextQuestion() {
+    const username = document.getElementById("username").value;
+    if (!username) {
+        alert("Please enter your name before starting the quiz.");
+        return;
+    }
     
-    if (currentQuestionIndex < quizData.length) {
-        const currentQuestion = quizData[currentQuestionIndex];
-        questionElement.innerText = currentQuestion.question;
+    if (currentQuestion < questions.length) {
+        const questionData = questions[currentQuestion];
+        document.getElementById("question").innerText = questionData.q;
+        
+        const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = "";
         
-        currentQuestion.options.forEach(option => {
+        questionData.options.forEach((option, index) => {
             const button = document.createElement("button");
             button.innerText = option;
-            button.onclick = () => submitAnswer(option);
+            button.onclick = () => submitAnswer(index);
             optionsContainer.appendChild(button);
         });
         
-        progressBar.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+        updateProgress();
     } else {
-        showResults();
+        document.getElementById("question-container").innerHTML = `Quiz Completed! Your answers have been recorded.`;
+        saveQuizResult(username, score);
     }
 }
 
-// Submit answer
-function submitAnswer(selectedOption) {
-    userAnswers.push({
-        question: quizData[currentQuestionIndex].question,
-        selected: selectedOption,
-        correct: selectedOption === quizData[currentQuestionIndex].answer
-    });
-    if (selectedOption === quizData[currentQuestionIndex].answer) {
+function submitAnswer(selectedIndex) {
+    const correctIndex = questions[currentQuestion].correct;
+    if (selectedIndex === correctIndex) {
         score++;
     }
-    currentQuestionIndex++;
-    loadQuestion();
+    userAnswers.push({ question: questions[currentQuestion].q, selected: questions[currentQuestion].options[selectedIndex] });
+    currentQuestion++;
+    nextQuestion();
 }
 
-// Show Results
-function showResults() {
-    document.getElementById("question").innerText = `Quiz Completed! You got ${score}/${quizData.length} correct! Well done!`;
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("nextBtn").style.display = "none";
-    saveQuizResult();
+function updateProgress() {
+    const progress = document.getElementById("progress");
+    progress.style.width = `${(currentQuestion / questions.length) * 100}%`;
 }
 
-// Save Quiz Result to Firebase
-async function saveQuizResult() {
+async function saveQuizResult(username, userScore) {
     try {
         await addDoc(collection(db, "oacra-quiz"), {
-            score: score,
-            total: quizData.length,
+            username: username,
+            score: userScore,
             timestamp: serverTimestamp()
         });
-        console.log("Quiz result saved!");
+        document.getElementById("question-container").innerHTML += `<p>You scored ${userScore}/${questions.length}. Great job staying compliant! Keep it up! ✅</p>`;
     } catch (error) {
         console.error("Error saving result:", error);
     }
 }
 
 // Start quiz on load
-window.onload = loadQuestion;
+nextQuestion();
 
