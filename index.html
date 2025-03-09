@@ -19,10 +19,9 @@
             box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         }
         button {
-            margin-top: 10px;
-            padding: 10px;
+            margin: 10px;
+            padding: 10px 20px;
             font-size: 16px;
-            margin: 5px;
         }
     </style>
 </head>
@@ -30,10 +29,8 @@
     <h1>OACRA Compliance Readiness Quiz</h1>
     <div class="quiz-container">
         <p id="question">Loading question...</p>
-        <div id="answers">
-            <button onclick="submitAnswer('Yes')">Yes</button>
-            <button onclick="submitAnswer('No')">No</button>
-        </div>
+        <button onclick="submitAnswer('Yes')">Yes</button>
+        <button onclick="submitAnswer('No')">No</button>
     </div>
 
     <!-- Firebase SDK -->
