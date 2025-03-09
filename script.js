@@ -22,12 +22,32 @@ let currentQuestion = 0;
 let score = 0;
 let incorrectAnswers = [];
 
-// Questions Array (Multiple Choice & Yes/No)
+// Questions Array (With Explanations)
 const questions = [
-    { question: "What is the first step to probation success?", options: ["Find a job", "Organize documents", "Ignore supervision", "Wait it out"], answer: "Organize documents" },
-    { question: "Can you request early termination of probation?", options: ["Yes", "No"], answer: "Yes" },
-    { question: "Is employment verification required?", options: ["Yes", "No"], answer: "Yes" },
-    { question: "How do you report a change of address?", options: ["Tell a friend", "Call your officer", "Submit a written request", "Ignore it"], answer: "Submit a written request" }
+    {
+        question: "What is the first step to probation success?",
+        options: ["Find a job", "Organize documents", "Ignore supervision", "Wait it out"],
+        answer: "Organize documents",
+        explanation: "Keeping your documents organized ensures compliance and prevents violations."
+    },
+    {
+        question: "Can you request early termination of probation?",
+        options: ["Yes", "No"],
+        answer: "Yes",
+        explanation: "If eligible, you may apply for early termination after meeting all conditions."
+    },
+    {
+        question: "Is employment verification required?",
+        options: ["Yes", "No"],
+        answer: "Yes",
+        explanation: "Probation officers must verify employment to track compliance."
+    },
+    {
+        question: "How do you report a change of address?",
+        options: ["Tell a friend", "Call your officer", "Submit a written request", "Ignore it"],
+        answer: "Submit a written request",
+        explanation: "Request approval from your officer before moving, and update your monthly/biweekly form."
+    }
 ];
 
 // Start Quiz Immediately
@@ -62,13 +82,15 @@ function nextQuestion() {
 
 // Check Answer
 function checkAnswer(selected) {
-    if (selected === questions[currentQuestion].answer) {
+    const q = questions[currentQuestion];
+    if (selected === q.answer) {
         score++;
     } else {
         incorrectAnswers.push({ 
-            question: questions[currentQuestion].question, 
+            question: q.question, 
             selected: selected, 
-            correct: questions[currentQuestion].answer 
+            correct: q.answer,
+            explanation: q.explanation
         });
     }
     currentQuestion++;
@@ -86,7 +108,8 @@ async function endQuiz() {
         incorrectAnswers.forEach(item => {
             resultHTML += `<li><strong>Q:</strong> ${item.question}<br>
                            <span style="color:red;"><strong>Your Answer:</strong> ${item.selected}</span><br>
-                           <span style="color:green;"><strong>Correct Answer:</strong> ${item.correct}</span></li><br>`;
+                           <span style="color:green;"><strong>Correct Answer:</strong> ${item.correct}</span><br>
+                           <span style="color:blue;"><strong>Explanation:</strong> ${item.explanation}</span></li><br>`;
         });
         resultHTML += `</ul>`;
     }
@@ -105,5 +128,6 @@ async function endQuiz() {
         console.error("Error saving result:", error);
     }
 }
+
 
 
