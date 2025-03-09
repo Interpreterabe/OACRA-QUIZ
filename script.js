@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
+  apiKey: "YOUR-API-KEY",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
   storageBucket: "oacra-quiz.appspot.com",
@@ -17,9 +17,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging to check if Firebase is initialized
+// Debugging Firebase Initialization
 console.log("Firebase App Initialized:", app);
 console.log("Firestore DB:", db);
+
 // Quiz Questions
 const questions = [
     "What is the first step to probation success?",
@@ -30,26 +31,35 @@ const questions = [
 
 let currentQuestion = 0;
 
-// Show next question
-function nextQuestion() {
-    if (currentQuestion < questions.length) {
-        document.getElementById("question").innerText = questions[currentQuestion];
-        currentQuestion++;
-    } else {
-        document.getElementById("question").innerText = "Quiz Completed!";
-        saveQuizResult(100); // Example score
+// Show first question
+document.getElementById("question").innerText = questions[currentQuestion];
+
+// Handle answer selection and store it in Firebase
+async function submitAnswer(answer) {
+    try {
+        // Save the response to Firestore
+        const docRef = await addDoc(collection(db, "oacra-quiz"), {
+            question: questions[currentQuestion],
+            answer: answer,
+            timestamp: serverTimestamp()
+        });
+
+        console.log("Answer saved with ID:", docRef.id);
+
+        // Move to the next question
+        nextQuestion();
+    } catch (error) {
+        console.error("Error saving answer:", error);
     }
 }
 
-// Save Quiz Result to Firebase
-async function saveQuizResult(userScore) {
-    try {
-        const docRef = await addDoc(collection(db, "oacra-quiz"), {
-            score: userScore,
-            timestamp: serverTimestamp()
-        });
-        console.log("Quiz result saved with ID:", docRef.id);
-    } catch (error) {
-        console.error("Error saving result:", error);
+// Function to display the next question
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+        document.getElementById("question").innerText = questions[currentQuestion];
+    } else {
+        document.getElementById("question").innerText = "Quiz Completed!";
+        document.getElementById("answers").innerHTML = ""; // Hide answer buttons after completion
     }
 }
