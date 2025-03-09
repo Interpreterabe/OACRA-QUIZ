@@ -21,6 +21,7 @@ const db = getFirestore(app);
 let userName = "";
 let currentQuestion = 0;
 let score = 0;
+let incorrectAnswers = [];
 
 // Questions Array (Multiple Choice & Yes/No)
 const questions = [
@@ -70,30 +71,27 @@ function nextQuestion() {
 function checkAnswer(selected) {
     if (selected === questions[currentQuestion].answer) {
         score++;
+    } else {
+        incorrectAnswers.push({ 
+            question: questions[currentQuestion].question, 
+            selected: selected, 
+            correct: questions[currentQuestion].answer 
+        });
     }
     currentQuestion++;
     nextQuestion();
 }
 
-// End Quiz & Save Results
+// End Quiz & Show Missed Answers
 async function endQuiz() {
-    document.getElementById("quizContainer").innerHTML = `<h2>Quiz Completed!</h2><p>${userName}, you scored ${score}/${questions.length}.</p>
-    <p>Great job! Keep learning and stay on track!</p>`;
+    let resultHTML = `<h2>Quiz Completed!</h2>
+                      <p>${userName}, you scored <strong>${score}/${questions.length}</strong>.</p>
+                      <p>Great job! Keep learning and stay on track!</p>`;
 
-    try {
-        await addDoc(collection(db, "oacra-quiz"), {
-            name: userName,
-            score: score,
-            total: questions.length,
-            timestamp: serverTimestamp()
-        });
-        console.log("Quiz result saved.");
-    } catch (error) {
-        console.error("Error saving result:", error);
-    }
-}
-
-// Attach start function to Next button
-document.getElementById("startButton").addEventListener("click", startQuiz);
+    if (incorrectAnswers.length > 0) {
+        resultHTML += `<h3>Review Your Answers:</h3><ul>`;
+        incorrectAnswers.forEach(item => {
+            resultHTML += `<li><strong>Q:</strong> ${item.question}<br>
+                           <span style="
 
 
