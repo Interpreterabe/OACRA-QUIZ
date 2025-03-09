@@ -22,7 +22,7 @@ let currentQuestion = 0;
 let score = 0;
 let incorrectAnswers = [];
 
-// Questions Array (With Explanations)
+// Quiz Questions (Multiple Choice & Yes/No)
 const questions = [
     {
         question: "What is the first step to probation success?",
@@ -50,9 +50,8 @@ const questions = [
     }
 ];
 
-// Start Quiz Immediately
+// Load First Question
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("quizContainer").style.display = "block";
     nextQuestion();
 });
 
@@ -63,7 +62,7 @@ function nextQuestion() {
         document.getElementById("question").innerText = q.question;
         
         const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = "";
+        optionsContainer.innerHTML = ""; // Clear previous options
 
         q.options.forEach(option => {
             const button = document.createElement("button");
@@ -128,6 +127,7 @@ async function endQuiz() {
         console.error("Error saving result:", error);
     }
 }
+
 
 
 
