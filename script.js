@@ -4,64 +4,90 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
-  authDomain: "oacra-quiz.firebaseapp.com",
-  projectId: "oacra-quiz",
-  storageBucket: "oacra-quiz.appspot.com",
-  messagingSenderId: "220184308634",
-  appId: "1:220184308634:web:dda26b6686016489e0a823",
-  measurementId: "G-M36PWVPBDS"
+    apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
+    authDomain: "oacra-quiz.firebaseapp.com",
+    projectId: "oacra-quiz",
+    storageBucket: "oacra-quiz.appspot.com",
+    messagingSenderId: "220184308634",
+    appId: "1:220184308634:web:dda26b6686016489e0a823",
+    measurementId: "G-M36PWVPBDS"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging to check if Firebase is initialized
+// Debugging Firebase
 console.log("Firebase App Initialized:", app);
 console.log("Firestore DB:", db);
 
-// Quiz Questions
-const questions = [
-    "What is the first step to probation success?",
-    "Can you request early termination of probation?",
-    "Is employment verification required?",
-    "How do you report a change of address?"
+// Quiz Questions and Answers
+const quizData = [
+    {
+        question: "What is the first step to probation success?",
+        answers: ["Read your probation conditions", "Ignore your probation officer", "Wait for instructions"],
+        correct: "Read your probation conditions"
+    },
+    {
+        question: "Can you request early termination of probation?",
+        answers: ["Yes, after completing all conditions", "No, you must serve full probation"],
+        correct: "Yes, after completing all conditions"
+    },
+    {
+        question: "Is employment verification required?",
+        answers: ["Yes, for all jobs", "No, only for some jobs", "It depends on your probation order"],
+        correct: "It depends on your probation order"
+    },
+    {
+        question: "How do you report a change of address?",
+        answers: ["Call your probation officer", "Move without telling anyone", "Update your address at the courthouse"],
+        correct: "Call your probation officer"
+    }
 ];
 
 let currentQuestion = 0;
 
-// Display the first question
-document.getElementById("question").innerText = questions[currentQuestion];
+// Function to display the next question
+function loadQuestion() {
+    if (currentQuestion < quizData.length) {
+        const questionData = quizData[currentQuestion];
+        document.getElementById("question").innerText = questionData.question;
 
-// Function to handle answers
-function submitAnswer(answer) {
-    console.log("User selected:", answer);
-    saveQuizResult(100, answer); // Example: Sending answer & score to Firebase
-    nextQuestion();
-}
+        // Clear previous answers
+        const answersDiv = document.getElementById("answers");
+        answersDiv.innerHTML = "";
 
-// Function to go to the next question
-function nextQuestion() {
-    currentQuestion++;
-    if (currentQuestion < questions.length) {
-        document.getElementById("question").innerText = questions[currentQuestion];
+        // Create answer buttons
+        questionData.answers.forEach(answer => {
+            const button = document.createElement("button");
+            button.innerText = answer;
+            button.className = "answer-btn";
+            button.onclick = () => submitAnswer(answer);
+            answersDiv.appendChild(button);
+        });
     } else {
-        document.getElementById("question").innerText = "Quiz Completed!";
+        document.getElementById("question").innerText = "Quiz Completed! Your answers have been recorded.";
+        document.getElementById("answers").innerHTML = "";
     }
 }
 
-// Save Quiz Result to Firebase
-async function saveQuizResult(userScore, userAnswer) {
+// Function to submit answer
+async function submitAnswer(answer) {
+    console.log("User answer:", answer);
     try {
         const docRef = await addDoc(collection(db, "oacra-quiz"), {
-            question: questions[currentQuestion - 1], // Store the last question
-            answer: userAnswer, // Store the selected answer
-            score: userScore,
+            question: quizData[currentQuestion].question,
+            answer: answer,
+            isCorrect: answer === quizData[currentQuestion].correct, // Check if the answer is correct
             timestamp: serverTimestamp()
         });
-        console.log("Quiz result saved with ID:", docRef.id);
+        console.log("Answer saved with ID:", docRef.id);
+        currentQuestion++; // Move to next question
+        loadQuestion(); // Load the next question
     } catch (error) {
-        console.error("Error saving result:", error);
+        console.error("Error saving answer:", error);
     }
 }
+
+// Load the first question
+loadQuestion();
