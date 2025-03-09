@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "YOUR-NEW-API-KEY",
+  apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
   storageBucket: "oacra-quiz.appspot.com",
