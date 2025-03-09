@@ -22,6 +22,7 @@
             margin-top: 10px;
             padding: 10px;
             font-size: 16px;
+            margin: 5px;
         }
     </style>
 </head>
@@ -29,70 +30,17 @@
     <h1>OACRA Compliance Readiness Quiz</h1>
     <div class="quiz-container">
         <p id="question">Loading question...</p>
-        <button id="next-btn">Next</button>
+        <div id="answers">
+            <button onclick="submitAnswer('Yes')">Yes</button>
+            <button onclick="submitAnswer('No')">No</button>
+        </div>
     </div>
 
-    <!-- Firebase SDK (Ensure Order is Correct) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    <!-- Firebase SDK -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "YOUR-API-KEY",
-            authDomain: "oacra-quiz.firebaseapp.com",
-            projectId: "oacra-quiz",
-            storageBucket: "oacra-quiz.appspot.com",
-            messagingSenderId: "220184308634",
-            appId: "1:220184308634:web:dda26b6686016489e0a823",
-            measurementId: "G-M36PWVPBDS"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Debugging Firebase
-        console.log("Firebase App Initialized:", app);
-        console.log("Firestore DB:", db);
-
-        // Quiz Questions
-        const questions = [
-            "What is the first step to probation success?",
-            "Can you request early termination of probation?",
-            "Is employment verification required?",
-            "How do you report a change of address?"
-        ];
-
-        let currentQuestion = 0;
-
-        // Show next question
-        function nextQuestion() {
-            if (currentQuestion < questions.length) {
-                document.getElementById("question").innerText = questions[currentQuestion];
-                currentQuestion++;
-            } else {
-                document.getElementById("question").innerText = "Quiz Completed!";
-                saveQuizResult(100); // Example score
-            }
-        }
-
-        // Save Quiz Result to Firebase
-        async function saveQuizResult(userScore) {
-            try {
-                const docRef = await addDoc(collection(db, "oacra-quiz"), {
-                    score: userScore,
-                    timestamp: serverTimestamp()
-                });
-                console.log("Quiz result saved with ID:", docRef.id);
-            } catch (error) {
-                console.error("Error saving result:", error);
-            }
-        }
-
-        // Attach event listener to button
-        document.getElementById("next-btn").addEventListener("click", nextQuestion);
-    </script>
-
+    <!-- Your script file -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
