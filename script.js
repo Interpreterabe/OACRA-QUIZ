@@ -1,4 +1,4 @@
-// Import Firebase modules
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -17,76 +17,83 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Quiz Questions
-const questions = [
-    { q: "What is the first step to probation success?", options: ["Understand your conditions", "Ignore your officer", "Miss meetings"], correct: 0 },
-    { q: "Can you request early termination of probation?", options: ["Yes", "No"], correct: 0 },
-    { q: "Is employment verification required?", options: ["Yes", "No"], correct: 0 },
-    { q: "How do you report a change of address?", options: ["Notify your officer", "Ignore it", "Wait until the next check-in"], correct: 0 },
-    { q: "Are travel restrictions part of probation?", options: ["Yes", "No"], correct: 0 },
-    { q: "What happens if restitution is unpaid?", options: ["Violation can be filed", "Nothing", "The debt disappears"], correct: 0 },
-];
-
+// Variables
+let userName = "";
 let currentQuestion = 0;
 let score = 0;
-let userAnswers = [];
 
-function nextQuestion() {
-    const username = document.getElementById("username").value;
-    if (!username) {
-        alert("Please enter your name before starting the quiz.");
+// Questions Array (Multiple Choice & Yes/No)
+const questions = [
+    { question: "What is the first step to probation success?", options: ["Find a job", "Organize documents", "Ignore supervision", "Wait it out"], answer: "Organize documents" },
+    { question: "Can you request early termination of probation?", options: ["Yes", "No"], answer: "Yes" },
+    { question: "Is employment verification required?", options: ["Yes", "No"], answer: "Yes" },
+    { question: "How do you report a change of address?", options: ["Tell a friend", "Call your officer", "Submit a written request", "Ignore it"], answer: "Submit a written request" }
+];
+
+// Start Quiz
+function startQuiz() {
+    userName = document.getElementById("nameInput").value.trim();
+    if (userName === "") {
+        alert("Please enter your name to continue.");
         return;
     }
-    
+    document.getElementById("nameContainer").style.display = "none";
+    document.getElementById("quizContainer").style.display = "block";
+    nextQuestion();
+}
+
+// Display Next Question
+function nextQuestion() {
     if (currentQuestion < questions.length) {
-        const questionData = questions[currentQuestion];
-        document.getElementById("question").innerText = questionData.q;
+        const q = questions[currentQuestion];
+        document.getElementById("question").innerText = q.question;
         
         const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = "";
-        
-        questionData.options.forEach((option, index) => {
+
+        q.options.forEach(option => {
             const button = document.createElement("button");
             button.innerText = option;
-            button.onclick = () => submitAnswer(index);
+            button.classList.add("option-button");
+            button.onclick = () => checkAnswer(option);
             optionsContainer.appendChild(button);
         });
-        
-        updateProgress();
+
+        // Update Progress Bar
+        document.getElementById("progressBar").value = (currentQuestion / questions.length) * 100;
     } else {
-        document.getElementById("question-container").innerHTML = `Quiz Completed! Your answers have been recorded.`;
-        saveQuizResult(username, score);
+        endQuiz();
     }
 }
 
-function submitAnswer(selectedIndex) {
-    const correctIndex = questions[currentQuestion].correct;
-    if (selectedIndex === correctIndex) {
+// Check Answer
+function checkAnswer(selected) {
+    if (selected === questions[currentQuestion].answer) {
         score++;
     }
-    userAnswers.push({ question: questions[currentQuestion].q, selected: questions[currentQuestion].options[selectedIndex] });
     currentQuestion++;
     nextQuestion();
 }
 
-function updateProgress() {
-    const progress = document.getElementById("progress");
-    progress.style.width = `${(currentQuestion / questions.length) * 100}%`;
-}
+// End Quiz & Save Results
+async function endQuiz() {
+    document.getElementById("quizContainer").innerHTML = `<h2>Quiz Completed!</h2><p>${userName}, you scored ${score}/${questions.length}.</p>
+    <p>Great job! Keep learning and stay on track!</p>`;
 
-async function saveQuizResult(username, userScore) {
     try {
         await addDoc(collection(db, "oacra-quiz"), {
-            username: username,
-            score: userScore,
+            name: userName,
+            score: score,
+            total: questions.length,
             timestamp: serverTimestamp()
         });
-        document.getElementById("question-container").innerHTML += `<p>You scored ${userScore}/${questions.length}. Great job staying compliant! Keep it up! ✅</p>`;
+        console.log("Quiz result saved.");
     } catch (error) {
         console.error("Error saving result:", error);
     }
 }
 
-// Start quiz on load
-nextQuestion();
+// Attach start function to Next button
+document.getElementById("startButton").addEventListener("click", startQuiz);
+
 
