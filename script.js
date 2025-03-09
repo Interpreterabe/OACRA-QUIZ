@@ -4,90 +4,95 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
-    authDomain: "oacra-quiz.firebaseapp.com",
-    projectId: "oacra-quiz",
-    storageBucket: "oacra-quiz.appspot.com",
-    messagingSenderId: "220184308634",
-    appId: "1:220184308634:web:dda26b6686016489e0a823",
-    measurementId: "G-M36PWVPBDS"
+  apiKey: "YOUR-API-KEY",
+  authDomain: "oacra-quiz.firebaseapp.com",
+  projectId: "oacra-quiz",
+  storageBucket: "oacra-quiz.appspot.com",
+  messagingSenderId: "220184308634",
+  appId: "1:220184308634:web:dda26b6686016489e0a823",
+  measurementId: "G-M36PWVPBDS"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Debugging Firebase
+// Debugging Firebase Connection
 console.log("Firebase App Initialized:", app);
 console.log("Firestore DB:", db);
 
 // Quiz Questions and Answers
 const quizData = [
-    {
-        question: "What is the first step to probation success?",
-        answers: ["Read your probation conditions", "Ignore your probation officer", "Wait for instructions"],
-        correct: "Read your probation conditions"
-    },
-    {
-        question: "Can you request early termination of probation?",
-        answers: ["Yes, after completing all conditions", "No, you must serve full probation"],
-        correct: "Yes, after completing all conditions"
-    },
-    {
-        question: "Is employment verification required?",
-        answers: ["Yes, for all jobs", "No, only for some jobs", "It depends on your probation order"],
-        correct: "It depends on your probation order"
-    },
-    {
-        question: "How do you report a change of address?",
-        answers: ["Call your probation officer", "Move without telling anyone", "Update your address at the courthouse"],
-        correct: "Call your probation officer"
-    }
+    { question: "What is the first step to probation success?", options: ["Stay informed", "Ignore rules"], answer: "Stay informed" },
+    { question: "Can you request early termination of probation?", options: ["Yes", "No"], answer: "Yes" },
+    { question: "Is employment verification required?", options: ["Yes", "No"], answer: "Yes" },
+    { question: "How do you report a change of address?", options: ["Tell probation officer", "Do nothing"], answer: "Tell probation officer" }
 ];
 
-let currentQuestion = 0;
-
-// Function to display the next question
-function loadQuestion() {
-    if (currentQuestion < quizData.length) {
-        const questionData = quizData[currentQuestion];
-        document.getElementById("question").innerText = questionData.question;
-
-        // Clear previous answers
-        const answersDiv = document.getElementById("answers");
-        answersDiv.innerHTML = "";
-
-        // Create answer buttons
-        questionData.answers.forEach(answer => {
-            const button = document.createElement("button");
-            button.innerText = answer;
-            button.className = "answer-btn";
-            button.onclick = () => submitAnswer(answer);
-            answersDiv.appendChild(button);
-        });
-    } else {
-        document.getElementById("question").innerText = "Quiz Completed! Your answers have been recorded.";
-        document.getElementById("answers").innerHTML = "";
-    }
-}
-
-// Function to submit answer
-async function submitAnswer(answer) {
-    console.log("User answer:", answer);
-    try {
-        const docRef = await addDoc(collection(db, "oacra-quiz"), {
-            question: quizData[currentQuestion].question,
-            answer: answer,
-            isCorrect: answer === quizData[currentQuestion].correct, // Check if the answer is correct
-            timestamp: serverTimestamp()
-        });
-        console.log("Answer saved with ID:", docRef.id);
-        currentQuestion++; // Move to next question
-        loadQuestion(); // Load the next question
-    } catch (error) {
-        console.error("Error saving answer:", error);
-    }
-}
+let currentQuestionIndex = 0;
+let score = 0;
+let userAnswers = [];
 
 // Load the first question
-loadQuestion();
+function loadQuestion() {
+    const questionElement = document.getElementById("question");
+    const optionsContainer = document.getElementById("options");
+    const progressBar = document.getElementById("progress-bar");
+    
+    if (currentQuestionIndex < quizData.length) {
+        const currentQuestion = quizData[currentQuestionIndex];
+        questionElement.innerText = currentQuestion.question;
+        optionsContainer.innerHTML = "";
+        
+        currentQuestion.options.forEach(option => {
+            const button = document.createElement("button");
+            button.innerText = option;
+            button.onclick = () => submitAnswer(option);
+            optionsContainer.appendChild(button);
+        });
+        
+        progressBar.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+    } else {
+        showResults();
+    }
+}
+
+// Submit answer
+function submitAnswer(selectedOption) {
+    userAnswers.push({
+        question: quizData[currentQuestionIndex].question,
+        selected: selectedOption,
+        correct: selectedOption === quizData[currentQuestionIndex].answer
+    });
+    if (selectedOption === quizData[currentQuestionIndex].answer) {
+        score++;
+    }
+    currentQuestionIndex++;
+    loadQuestion();
+}
+
+// Show Results
+function showResults() {
+    document.getElementById("question").innerText = `Quiz Completed! You got ${score}/${quizData.length} correct! Well done!`;
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("nextBtn").style.display = "none";
+    saveQuizResult();
+}
+
+// Save Quiz Result to Firebase
+async function saveQuizResult() {
+    try {
+        await addDoc(collection(db, "oacra-quiz"), {
+            score: score,
+            total: quizData.length,
+            timestamp: serverTimestamp()
+        });
+        console.log("Quiz result saved!");
+    } catch (error) {
+        console.error("Error saving result:", error);
+    }
+}
+
+// Start quiz on load
+window.onload = loadQuestion;
+
