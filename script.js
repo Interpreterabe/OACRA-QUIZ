@@ -18,7 +18,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Variables
-let userName = "";
 let currentQuestion = 0;
 let score = 0;
 let incorrectAnswers = [];
@@ -31,17 +30,11 @@ const questions = [
     { question: "How do you report a change of address?", options: ["Tell a friend", "Call your officer", "Submit a written request", "Ignore it"], answer: "Submit a written request" }
 ];
 
-// Start Quiz
-function startQuiz() {
-    userName = document.getElementById("nameInput").value.trim();
-    if (userName === "") {
-        alert("Please enter your name to continue.");
-        return;
-    }
-    document.getElementById("nameContainer").style.display = "none";
+// Start Quiz Immediately
+document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("quizContainer").style.display = "block";
     nextQuestion();
-}
+});
 
 // Display Next Question
 function nextQuestion() {
@@ -85,13 +78,32 @@ function checkAnswer(selected) {
 // End Quiz & Show Missed Answers
 async function endQuiz() {
     let resultHTML = `<h2>Quiz Completed!</h2>
-                      <p>${userName}, you scored <strong>${score}/${questions.length}</strong>.</p>
+                      <p>You scored <strong>${score}/${questions.length}</strong>.</p>
                       <p>Great job! Keep learning and stay on track!</p>`;
 
     if (incorrectAnswers.length > 0) {
         resultHTML += `<h3>Review Your Answers:</h3><ul>`;
         incorrectAnswers.forEach(item => {
             resultHTML += `<li><strong>Q:</strong> ${item.question}<br>
-                           <span style="
+                           <span style="color:red;"><strong>Your Answer:</strong> ${item.selected}</span><br>
+                           <span style="color:green;"><strong>Correct Answer:</strong> ${item.correct}</span></li><br>`;
+        });
+        resultHTML += `</ul>`;
+    }
+
+    document.getElementById("quizContainer").innerHTML = resultHTML;
+
+    try {
+        await addDoc(collection(db, "oacra-quiz"), {
+            score: score,
+            total: questions.length,
+            incorrect: incorrectAnswers,
+            timestamp: serverTimestamp()
+        });
+        console.log("Quiz result saved.");
+    } catch (error) {
+        console.error("Error saving result:", error);
+    }
+}
 
 
