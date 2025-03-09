@@ -3,24 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OACRA Quiz</title>
+    <title>OACRA Compliance Readiness Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f8f8f8; }
-        .container { width: 50%; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background: white; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
-        button { margin: 5px; padding: 10px; font-size: 16px; cursor: pointer; }
-        .option-button { display: block; width: 100%; margin: 5px 0; padding: 10px; border: 1px solid #ddd; background-color: #eee; cursor: pointer; }
-        .option-button:hover { background-color: #ddd; }
-        progress { width: 100%; margin-top: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            background: white;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress {
+            height: 10px;
+            width: 0%;
+            background: #007bff;
+            transition: width 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body>
     <h1>OACRA Compliance Readiness Quiz</h1>
-    <div class="container" id="quizContainer">
+    <div class="quiz-container">
         <p id="question">Loading question...</p>
-        <div id="options"></div>
-        <progress id="progressBar" value="0" max="100"></progress>
+        <div id="answers"></div>
+        <button id="nextBtn" style="display:none;">Next</button>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
     </div>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>
