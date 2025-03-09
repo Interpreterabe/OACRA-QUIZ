@@ -1,4 +1,4 @@
-// Import Firebase SDK properly
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -17,11 +17,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);  // ✅ Fix: Firestore is required for quiz storage
+// 🔥 Function to Save Quiz Results to Firebase
+async function saveQuizResult(userScore) {
+    try {
+        const docRef = await addDoc(collection(db, "oacra-quiz"), {
+            score: userScore,
+            timestamp: serverTimestamp()
+        });
+        console.log("✅ Quiz result saved with ID:", docRef.id);
+    } catch (error) {
+        console.error("❌ Error saving result:", error);
+    }
+}
 
-// ✅ Sample Questions
+// Sample Questions
 const questions = [
     "What is the first step to probation success?",
     "Can you request early termination of probation?",
@@ -31,28 +40,13 @@ const questions = [
 
 let currentQuestion = 0;
 
-// ✅ Show Next Question
+// 🔥 Function to Show Next Question
 function nextQuestion() {
     if (currentQuestion < questions.length) {
         document.getElementById("question").innerText = questions[currentQuestion];
         currentQuestion++;
     } else {
-        document.getElementById("question").innerText = "Quiz Completed!";
-        saveQuizResult(100); // Example Score
+        document.getElementById("question").innerText = "🎉 Quiz Completed!";
+        saveQuizResult(100);  // Example score
     }
 }
-
-// ✅ Save Quiz Result to Firestore
-async function saveQuizResult(userScore) {
-    try {
-        await addDoc(collection(db, "oacra-quiz"), {
-            score: userScore,
-            timestamp: serverTimestamp()
-        });
-        console.log("✅ Quiz result saved to Firestore!");
-    } catch (error) {
-        console.error("❌ Error saving result:", error);
-    }
-}
-
-
