@@ -9,8 +9,9 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: #f5f5f5;
+            background: white;
             padding: 20px;
+            color: #333;
         }
         .quiz-container {
             max-width: 600px;
@@ -19,6 +20,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid #0056b3; /* OACRA Theme */
         }
         button {
             margin-top: 15px;
@@ -27,12 +29,12 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            background: #007bff;
+            background: #0056b3; /* OACRA Blue */
             color: white;
             transition: 0.3s;
         }
         button:hover {
-            background: #0056b3;
+            background: #003f8a; /* Darker OACRA Blue */
         }
         .progress-bar {
             width: 100%;
@@ -44,13 +46,13 @@
         .progress {
             height: 10px;
             width: 0%;
-            background: #007bff;
+            background: #ff6600; /* OACRA Orange */
             transition: width 0.5s ease-in-out;
         }
     </style>
 </head>
 <body>
-    <h1>OACRA Compliance Readiness Quiz</h1>
+    <h1 style="color:#0056b3;">OACRA Compliance Readiness Quiz</h1>
     <div class="quiz-container">
         <p id="question">Loading question...</p>
         <div id="answers"></div>
@@ -62,3 +64,4 @@
     <script type="module" src="script.js"></script>
 </body>
 </html>
+
