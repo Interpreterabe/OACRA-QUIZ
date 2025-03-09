@@ -1,10 +1,10 @@
-// Import Firebase SDK
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Your Firebase Config
+// Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDr7Run0KxSmNbucDAIidh7bP8Qth4fiGk",
+  apiKey: "YOUR-API-KEY",
   authDomain: "oacra-quiz.firebaseapp.com",
   projectId: "oacra-quiz",
   storageBucket: "oacra-quiz.appspot.com",
@@ -17,20 +17,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 Function to Save Quiz Results to Firebase
-async function saveQuizResult(userScore) {
-    try {
-        const docRef = await addDoc(collection(db, "oacra-quiz"), {
-            score: userScore,
-            timestamp: serverTimestamp()
-        });
-        console.log("✅ Quiz result saved with ID:", docRef.id);
-    } catch (error) {
-        console.error("❌ Error saving result:", error);
-    }
-}
+// Debugging Firebase (Check Console)
+console.log("Firebase Initialized:", app);
+console.log("Firestore Initialized:", db);
 
-// Sample Questions
+// Quiz Questions
 const questions = [
     "What is the first step to probation success?",
     "Can you request early termination of probation?",
@@ -40,13 +31,26 @@ const questions = [
 
 let currentQuestion = 0;
 
-// 🔥 Function to Show Next Question
+// Show next question
 function nextQuestion() {
     if (currentQuestion < questions.length) {
         document.getElementById("question").innerText = questions[currentQuestion];
         currentQuestion++;
     } else {
-        document.getElementById("question").innerText = "🎉 Quiz Completed!";
-        saveQuizResult(100);  // Example score
+        document.getElementById("question").innerText = "Quiz Completed!";
+        saveQuizResult(100); // Example score
+    }
+}
+
+// Save Quiz Result to Firebase
+async function saveQuizResult(userScore) {
+    try {
+        const docRef = await addDoc(collection(db, "oacra-quiz"), {
+            score: userScore,
+            timestamp: serverTimestamp()
+        });
+        console.log("Quiz result saved with ID:", docRef.id);
+    } catch (error) {
+        console.error("Error saving result:", error);
     }
 }
