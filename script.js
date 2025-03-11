@@ -20,15 +20,19 @@ const db = getFirestore(app);
 // Store the selected module
 let selectedModule = "";
 
-// Compliance Modules (Different Quizzes)
+// Compliance Modules (Expanded Quizzes)
 const modules = {
     "early-termination": [
         { question: "Can you request early termination?", options: ["Yes", "No"], answer: "Yes", explanation: "You may apply after meeting all conditions." },
-        { question: "What must you do before applying?", options: ["Complete all conditions", "Just ask your officer"], answer: "Complete all conditions", explanation: "All probation requirements must be met first." }
+        { question: "What must you do before applying?", options: ["Complete all conditions", "Just ask your officer"], answer: "Complete all conditions", explanation: "All probation requirements must be met first." },
+        { question: "Who approves early termination?", options: ["Probation Officer", "Judge"], answer: "Judge", explanation: "The judge has the final decision on early termination." },
+        { question: "When can you apply for early termination?", options: ["After half of probation", "At any time"], answer: "After half of probation", explanation: "Most cases allow early termination after completing half of the sentence." }
     ],
     "standard-conditions": [
         { question: "Do you have to report your employment status?", options: ["Yes", "No"], answer: "Yes", explanation: "Employment verification is required for compliance." },
-        { question: "Can you travel without permission?", options: ["Yes", "No"], answer: "No", explanation: "Travel must be pre-approved by your probation officer." }
+        { question: "Can you travel without permission?", options: ["Yes", "No"], answer: "No", explanation: "Travel must be pre-approved by your probation officer." },
+        { question: "Are you required to submit monthly reports?", options: ["Yes", "No"], answer: "Yes", explanation: "Monthly reports are a requirement of probation." },
+        { question: "What happens if you miss a meeting with your officer?", options: ["Nothing", "Violation could be filed"], answer: "Violation could be filed", explanation: "Missing required meetings can lead to a probation violation." }
     ]
 };
 
@@ -85,7 +89,7 @@ function checkAnswer(selected) {
 }
 
 // End Quiz & Show Results
-function endQuiz() {
+async function endQuiz() {
     let resultHTML = `<h2>Quiz Completed!</h2>
                       <p>You scored <strong>${score}/${modules[selectedModule].length}</strong>.</p>`;
 
@@ -100,5 +104,20 @@ function endQuiz() {
         resultHTML += `</ul>`;
     }
 
+    // Store completion in Firebase
+    try {
+        await addDoc(collection(db, "quiz-results"), {
+            module: selectedModule,
+            score: score,
+            totalQuestions: modules[selectedModule].length,
+            timestamp: serverTimestamp()
+        });
+        console.log("Quiz result saved to Firebase");
+    } catch (error) {
+        console.error("Error saving result:", error);
+    }
+
+    // Restart Quiz Button
+    resultHTML += `<button onclick="location.reload()">Restart Quiz</button>`;
     document.body.innerHTML = resultHTML;
 }
