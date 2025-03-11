@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Firebase Configuration (Replace "YOUR-API-KEY")
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
   authDomain: "oacra-quiz.firebaseapp.com",
@@ -17,8 +17,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Store the selected module
-let selectedModule = "";
+// Ensure the DOM has loaded before adding event listeners
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all module buttons and add event listeners
+    document.querySelectorAll(".module-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let moduleId = this.getAttribute("data-module");
+            startQuiz(moduleId);
+        });
+    });
+});
 
 // Compliance Modules (Different Quizzes)
 const modules = {
@@ -32,24 +40,18 @@ const modules = {
     ]
 };
 
-// Ensure modules are clickable
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".module-button").forEach(button => {
-        button.addEventListener("click", function() {
-            startQuiz(this.dataset.module);
-        });
-    });
-});
-
-// Start Quiz Function (Triggered by Module Selection)
+// Start Quiz Function
 function startQuiz(moduleId) {
-    selectedModule = moduleId;
-    document.body.innerHTML = `<h1>${selectedModule.replace("-", " ").toUpperCase()} Quiz</h1>
+    document.body.innerHTML = `<h1>${moduleId.replace("-", " ").toUpperCase()} Quiz</h1>
                                <div id="quizContainer">
                                   <p id="question">Loading...</p>
                                   <div id="options"></div>
                                   <progress id="progressBar" value="0" max="100"></progress>
                                </div>`;
+    currentQuestion = 0;
+    score = 0;
+    incorrectAnswers = [];
+    selectedModule = moduleId;
     nextQuestion();
 }
 
@@ -57,6 +59,7 @@ function startQuiz(moduleId) {
 let currentQuestion = 0;
 let score = 0;
 let incorrectAnswers = [];
+let selectedModule = "";
 
 // Display Next Question
 function nextQuestion() {
@@ -109,6 +112,8 @@ function endQuiz() {
         resultHTML += `</ul>`;
     }
 
+    // Add a restart button at the end
     resultHTML += `<button onclick="location.reload()">Restart Quiz</button>`;
+
     document.body.innerHTML = resultHTML;
 }
