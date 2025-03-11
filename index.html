@@ -3,79 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OACRA Compliance Readiness Quiz</title>
+    <title>OACRA Compliance Modules</title>
     <style>
-        /* General Styling */
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff; /* White Background */
-            color: #333;
-        }
-
-        /* Container */
-        .container { 
-            width: 90%;
-            max-width: 600px;
-            margin: auto; 
-            padding: 20px; 
-            border-radius: 8px;
-            background: #ffffff;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            transition: 0.3s ease-in-out;
-        }
-
-        h1 {
-            color: #003366; /* Dark Blue */
-        }
-
-        /* Buttons */
-        .option-button {
-            display: block;
-            width: 100%;
-            margin: 8px 0;
-            padding: 12px;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .option-button:hover {
-            background-color: #003366;
-            color: white;
-        }
-
-        /* Progress Bar */
-        progress {
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: #ddd;
-        }
-
-        /* Mobile-Friendly */
-        @media screen and (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-        }
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #ffffff; color: #333; }
+        .container { width: 90%; max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; background: #ffffff; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); margin-top: 20px; transition: 0.3s ease-in-out; }
+        h1 { color: #003366; }
+        button { padding: 12px; margin: 10px; border-radius: 5px; border: none; font-size: 16px; cursor: pointer; background-color: #003366; color: white; }
+        button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
-    <h1>OACRA Compliance Readiness Quiz</h1>
-    <div class="container" id="quizContainer">
-        <p id="question">Loading question...</p>
-        <div id="options"></div>
-        <progress id="progressBar" value="0" max="100"></progress>
+    <h1>OACRA Compliance Modules</h1>
+    <div class="container">
+        <h3>Select a Compliance Module:</h3>
+        <button onclick="startQuiz('early-termination')">✅ Early Termination Readiness</button>
+        <button onclick="startQuiz('standard-conditions')">📅 Standard Conditions Compliance</button>
+        <button onclick="startQuiz('community-control')">🔄 Community Control Compliance</button>
+        <button onclick="startQuiz('special-conditions')">🎯 Special Conditions Review</button>
     </div>
-
+    
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
