@@ -17,18 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Display module selection screen
-document.body.innerHTML = `
-  <h1>OACRA Compliance Modules</h1>
-  <p>Select a Compliance Module:</p>
-  <div id="moduleContainer">
-    <button class="module-button" onclick="startQuiz('early-termination')">✅ Early Termination Readiness</button>
-    <button class="module-button" onclick="startQuiz('standard-conditions')">📅 Standard Conditions Compliance</button>
-    <button class="module-button" onclick="startQuiz('community-control')">📌 Community Control Compliance</button>
-    <button class="module-button" onclick="startQuiz('special-conditions')">🎯 Special Conditions Review</button>
-  </div>
-`;
-
 // Store the selected module
 let selectedModule = "";
 
@@ -43,6 +31,15 @@ const modules = {
         { question: "Can you travel without permission?", options: ["Yes", "No"], answer: "No", explanation: "Travel must be pre-approved by your probation officer." }
     ]
 };
+
+// Ensure modules are clickable
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".module-button").forEach(button => {
+        button.addEventListener("click", function() {
+            startQuiz(this.dataset.module);
+        });
+    });
+});
 
 // Start Quiz Function (Triggered by Module Selection)
 function startQuiz(moduleId) {
