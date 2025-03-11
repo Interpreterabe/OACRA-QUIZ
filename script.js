@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Firebase Configuration (Replace "YOUR-API-KEY" with actual API key)
+// Firebase Configuration (Replace "YOUR-API-KEY")
 const firebaseConfig = {
   apiKey: "AIzaSyC-q5URdUdTOoDYSOFTQ2tJCXY_dAsCrKk",
   authDomain: "oacra-quiz.firebaseapp.com",
@@ -17,47 +17,44 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Store the selected module
+let selectedModule = "";
+
+// Compliance Modules (Different Quizzes)
+const modules = {
+    "early-termination": [
+        { question: "Can you request early termination?", options: ["Yes", "No"], answer: "Yes", explanation: "You may apply after meeting all conditions." },
+        { question: "What must you do before applying?", options: ["Complete all conditions", "Just ask your officer"], answer: "Complete all conditions", explanation: "All probation requirements must be met first." }
+    ],
+    "standard-conditions": [
+        { question: "Do you have to report your employment status?", options: ["Yes", "No"], answer: "Yes", explanation: "Employment verification is required for compliance." },
+        { question: "Can you travel without permission?", options: ["Yes", "No"], answer: "No", explanation: "Travel must be pre-approved by your probation officer." }
+    ]
+};
+
+// Start Quiz Function (Triggered by Module Selection)
+function startQuiz(moduleId) {
+    selectedModule = moduleId;
+    document.body.innerHTML = `<h1>${selectedModule.replace("-", " ").toUpperCase()} Quiz</h1>
+                               <div id="quizContainer">
+                                  <p id="question">Loading...</p>
+                                  <div id="options"></div>
+                                  <progress id="progressBar" value="0" max="100"></progress>
+                               </div>`;
+    nextQuestion();
+}
+
 // Variables
 let currentQuestion = 0;
 let score = 0;
 let incorrectAnswers = [];
 
-// **Expanded Quiz Questions**
-const questions = [
-    { question: "What is the first step to probation success?", options: ["Find a job", "Organize documents", "Ignore supervision", "Wait it out"], answer: "Organize documents", explanation: "Keeping your documents organized ensures compliance and prevents violations." },
-    
-    { question: "Can you request early termination of probation?", options: ["Yes", "No"], answer: "Yes", explanation: "If eligible, you may apply for early termination after meeting all conditions." },
-
-    { question: "Is employment verification required?", options: ["Yes", "No"], answer: "Yes", explanation: "Probation officers must verify employment to track compliance." },
-
-    { question: "How do you report a change of address?", options: ["Tell a friend", "Call your officer", "Submit a written request", "Ignore it"], answer: "Submit a written request", explanation: "Request approval from your officer before moving, and update your monthly/biweekly form." },
-
-    { question: "What happens if you fail to pay restitution on time?", options: ["Nothing happens", "Your probation is automatically extended", "Your probation officer will file a violation report"], answer: "Your probation officer will file a violation report", explanation: "Failure to pay restitution on time can lead to a technical violation, and your probation officer may request an extension or enforcement action." },
-
-    { question: "Are community control offenders required to submit a weekly schedule?", options: ["Yes", "No"], answer: "Yes", explanation: "Community control offenders must submit a weekly schedule for approval and cannot deviate from it without permission." },
-
-    { question: "Can you travel out of the county for work without permission?", options: ["Yes", "No"], answer: "No", explanation: "You must obtain verbal or written authorization from your probation officer before traveling out of the county for work." },
-
-    { question: "What must you do before applying for early termination of probation?", options: ["Complete all conditions and obligations", "Just ask your officer", "Wait until your probation term is over"], answer: "Complete all conditions and obligations", explanation: "You must complete all probation conditions, have no violations, and ensure your probation order allows early termination before applying." },
-
-    { question: "Does the probation officer notify the victim before approving early termination?", options: ["Yes", "No"], answer: "Yes", explanation: "The probation officer must notify the victim, and if the victim objects, the officer cannot recommend early termination, but you can still petition the court." },
-
-    { question: "If you are homeless, do you still need to report an address?", options: ["Yes", "No"], answer: "Yes", explanation: "Even if homeless, you must provide the nearest crossroads where you stay for your probation officer to verify." }
-];
-
-// Load First Question
-document.addEventListener("DOMContentLoaded", () => {
-    if (questions.length > 0) {
-        nextQuestion();
-    }
-});
-
 // Display Next Question
 function nextQuestion() {
-    if (currentQuestion < questions.length) {
-        const q = questions[currentQuestion];
+    if (currentQuestion < modules[selectedModule].length) {
+        const q = modules[selectedModule][currentQuestion];
         document.getElementById("question").innerText = q.question;
-
+        
         const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = ""; // Clear previous options
 
@@ -69,8 +66,7 @@ function nextQuestion() {
             optionsContainer.appendChild(button);
         });
 
-        // Update Progress Bar
-        document.getElementById("progressBar").value = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById("progressBar").value = (currentQuestion / modules[selectedModule].length) * 100;
     } else {
         endQuiz();
     }
@@ -78,26 +74,20 @@ function nextQuestion() {
 
 // Check Answer
 function checkAnswer(selected) {
-    const q = questions[currentQuestion];
+    const q = modules[selectedModule][currentQuestion];
     if (selected === q.answer) {
         score++;
     } else {
-        incorrectAnswers.push({ 
-            question: q.question, 
-            selected: selected, 
-            correct: q.answer,
-            explanation: q.explanation
-        });
+        incorrectAnswers.push({ question: q.question, selected: selected, correct: q.answer, explanation: q.explanation });
     }
     currentQuestion++;
     nextQuestion();
 }
 
-// End Quiz & Show Missed Answers
-async function endQuiz() {
+// End Quiz & Show Results
+function endQuiz() {
     let resultHTML = `<h2>Quiz Completed!</h2>
-                      <p>You scored <strong>${score}/${questions.length}</strong>.</p>
-                      <p>Great job! Keep learning and stay on track!</p>`;
+                      <p>You scored <strong>${score}/${modules[selectedModule].length}</strong>.</p>`;
 
     if (incorrectAnswers.length > 0) {
         resultHTML += `<h3>Review Your Answers:</h3><ul>`;
@@ -110,17 +100,5 @@ async function endQuiz() {
         resultHTML += `</ul>`;
     }
 
-    document.getElementById("quizContainer").innerHTML = resultHTML;
-
-    try {
-        await addDoc(collection(db, "oacra-quiz"), {
-            score: score,
-            total: questions.length,
-            incorrect: incorrectAnswers,
-            timestamp: serverTimestamp()
-        });
-        console.log("Quiz result saved.");
-    } catch (error) {
-        console.error("Error saving result:", error);
-    }
+    document.body.innerHTML = resultHTML;
 }
