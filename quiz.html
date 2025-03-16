@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OACRA Quiz</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Load jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="complianceReport.js"></script>
 </head>
 <body>
     <h1>OACRA Compliance Quiz</h1>
     <div id="quiz-container">
         <p>Loading quiz...</p>
     </div>
-    
-    <script type="module" src="quiz.js"></script>
 
-    <!-- Load jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="complianceReport.js"></script>
+    <!-- Add the quiz script -->
+    <script type="module" src="quiz.js"></script>
 </body>
 </html>
+
 
