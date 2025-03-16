@@ -40,12 +40,25 @@ document.addEventListener("DOMContentLoaded", function () {
             quizHTML += `
                 <div class="question">
                     <p><strong>${q.question}</strong></p>
-                    <button onclick="selectAnswer(${index}, 'Yes')">✅ Yes</button>
-                    <button onclick="selectAnswer(${index}, 'No')">❌ No</button>
+                    <button onclick="selectAnswer(${index}, 'Yes', '${q.correct}')">✅ Yes</button>
+                    <button onclick="selectAnswer(${index}, 'No', '${q.correct}')">❌ No</button>
+                    <p id="answer-${index}" class="answer-text" style="display:none; color:blue;"></p>
                 </div>
             `;
         });
-        document.getElementById("quiz-container").innerHTML = quizHTML;
+        quizContainer.innerHTML = quizHTML;
+    }
+
+    function selectAnswer(index, chosenAnswer, correctAnswer) {
+        const answerDisplay = document.getElementById(`answer-${index}`);
+        if (chosenAnswer === correctAnswer) {
+            answerDisplay.innerHTML = "✅ Correct!";
+            answerDisplay.style.color = "green";
+        } else {
+            answerDisplay.innerHTML = "❌ Incorrect!";
+            answerDisplay.style.color = "red";
+        }
+        answerDisplay.style.display = "block"; // Show answer after selection
     }
 
     window.loadQuiz = loadQuiz;
