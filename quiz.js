@@ -1,55 +1,52 @@
-const quizzes = {
-    "early-termination": [
-        { question: "Can you apply for early termination at any time?", correct: "No", explanation: "You must complete at least half of your probation period and meet all conditions." },
-        { question: "Does early termination remove your record?", correct: "No", explanation: "Early termination only ends your probation early; it does not expunge your record." }
-    ],
-    "standard-conditions": [
-        { question: "Do you need to report monthly?", correct: "Yes", explanation: "Standard probation requires regular check-ins with your probation officer." },
-        { question: "Can you travel without permission?", correct: "No", explanation: "You must get approval from your probation officer before traveling." }
-    ],
-    "community-control": [
-        { question: "Is community control the same as house arrest?", correct: "Yes", explanation: "Community control is a strict form of supervision similar to house arrest." },
-        { question: "Can you leave your house without approval?", correct: "No", explanation: "All movement must be pre-approved and scheduled." }
-    ],
-    "special-conditions": [
-        { question: "Are special conditions mandatory?", correct: "Yes", explanation: "Failure to complete special conditions may result in a violation." },
-        { question: "Who determines special conditions?", correct: "Court", explanation: "Special conditions are ordered by the judge and must be followed." }
-    ]
-};
-
-document.getElementById("startQuiz").addEventListener("click", function () {
-    const selectedQuiz = document.getElementById("quizSelector").value;
-    loadQuiz(selectedQuiz);
-});
-
-function loadQuiz(quizType) {
+document.addEventListener("DOMContentLoaded", function () {
     const quizContainer = document.getElementById("quiz-container");
-    quizContainer.innerHTML = ""; // Clear previous quiz
-    quizContainer.style.display = "block";
+    const quizSelect = document.getElementById("quiz-select");
 
-    const questions = quizzes[quizType];
-    if (!questions) {
-        quizContainer.innerHTML = "<p>Error loading quiz.</p>";
-        return;
+    function loadQuiz() {
+        const selectedQuiz = quizSelect.value;
+        quizContainer.style.display = "block"; // Show quiz container
+        quizContainer.innerHTML = "<p>Loading questions...</p>";
+
+        fetchQuizQuestions(selectedQuiz);
     }
 
-    questions.forEach((q, index) => {
-        const questionEl = document.createElement("div");
-        questionEl.innerHTML = `
-            <p><strong>${q.question}</strong></p>
-            <button class="answer-btn" data-answer="Yes">${q.correct === "Yes" ? "✅ Yes" : "❌ Yes"}</button>
-            <button class="answer-btn" data-answer="No">${q.correct === "No" ? "✅ No" : "❌ No"}</button>
-            <p class="explanation" style="display:none; color:blue;"><strong>Explanation:</strong> ${q.explanation}</p>
-            <hr>
-        `;
-        quizContainer.appendChild(questionEl);
-    });
+    function fetchQuizQuestions(quizType) {
+        const quizzes = {
+            "early-termination": [
+                { question: "Are you eligible for early termination?", correct: "Yes" },
+                { question: "Do you need to complete all conditions first?", correct: "Yes" }
+            ],
+            "standard-conditions": [
+                { question: "Do you need to report monthly?", correct: "Yes" },
+                { question: "Can you travel without permission?", correct: "No" }
+            ],
+            "community-control": [
+                { question: "Do you need a curfew?", correct: "Yes" },
+                { question: "Can you change your schedule without approval?", correct: "No" }
+            ],
+            "special-conditions": [
+                { question: "Are special conditions mandatory?", correct: "Yes" },
+                { question: "Who determines special conditions?", correct: "Court" }
+            ]
+        };
 
-    document.querySelectorAll(".answer-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const correctAnswer = this.parentElement.querySelector(".answer-btn").getAttribute("data-answer");
-            const explanation = this.parentElement.querySelector(".explanation");
-            explanation.style.display = "block";
+        const selectedQuestions = quizzes[quizType] || [];
+        displayQuiz(selectedQuestions);
+    }
+
+    function displayQuiz(questions) {
+        let quizHTML = "";
+        questions.forEach((q, index) => {
+            quizHTML += `
+                <div class="question">
+                    <p><strong>${q.question}</strong></p>
+                    <button onclick="selectAnswer(${index}, 'Yes')">✅ Yes</button>
+                    <button onclick="selectAnswer(${index}, 'No')">❌ No</button>
+                </div>
+            `;
         });
-    });
-}
+        document.getElementById("quiz-container").innerHTML = quizHTML;
+    }
+
+    window.loadQuiz = loadQuiz;
+});
