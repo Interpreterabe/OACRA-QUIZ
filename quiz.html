@@ -1,29 +1,17 @@
-// complianceReport.js
-
-import jsPDF from 'jspdf';
-
-function generateComplianceReport(userName, score, total, recommendations) {
-    const doc = new jsPDF();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OACRA Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>OACRA Compliance Quiz</h1>
+    <div id="quiz-container">
+        <p>Loading quiz...</p>
+    </div>
     
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('OACRA Compliance Report', 20, 20);
-    
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`User: ${userName}`, 20, 40);
-    doc.text(`Quiz Score: ${score} / ${total}`, 20, 50);
-    
-    doc.setFontSize(14);
-    doc.text('Recommendations:', 20, 70);
-    
-    let y = 80;
-    recommendations.forEach((rec, index) => {
-        doc.text(`${index + 1}. ${rec}`, 25, y);
-        y += 10;
-    });
-    
-    doc.save('OACRA_Compliance_Report.pdf');
-}
-
-export default generateComplianceReport;
+    <script type="module" src="quiz.js"></script>
+</body>
+</html>
