@@ -5,26 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OACRA Compliance Quiz</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Load jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="complianceReport.js"></script>
 </head>
 <body>
     <h1>OACRA Compliance Quiz</h1>
-    
-    <h2>Select a Compliance Quiz:</h2>
-    <select id="quizSelector">
+    <label for="quiz-select">Select a Compliance Quiz:</label>
+    <select id="quiz-select">
         <option value="early-termination">✅ Early Termination Readiness</option>
         <option value="standard-conditions">📅 Standard Conditions Compliance</option>
         <option value="community-control">📌 Community Control Compliance</option>
         <option value="special-conditions">🎯 Special Conditions Review</option>
     </select>
-    <button id="startQuiz">Start Quiz</button>
+    <button onclick="loadQuiz()">Start Quiz</button>
 
-    <div id="quiz-container" style="display:none;">
+    <!-- Quiz container (hidden until a quiz is selected) -->
+    <div id="quiz-container" style="display: none;">
         <p>Loading quiz...</p>
     </div>
 
-    <script type="module" src="quiz.js"></script>
+    <script src="quiz.js"></script>
 </body>
 </html>
